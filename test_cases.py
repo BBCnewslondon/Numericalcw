@@ -33,9 +33,16 @@ for i, N in enumerate(N_values):
     x_rk3, y_rk3 = rk3(A1, bvector1, yo1, interval1, N)
     x_dirk3, y_dirk3 = dirk3(A1, bvector1, yo1, interval1, N)
     
-    y_exact = exact_y1(x_rk3[-1])
-    error_rk3 = np.abs(y_rk3[-1, 1] - y_exact[0,1]) / np.abs(y_exact[0,1])
-    error_dirk3 = np.abs(y_dirk3[-1, 1] - y_exact[0,1]) / np.abs(y_exact[0,1])
+    # Get the exact solution at all x points
+    y_exact_all = exact_y1(x_rk3)
+    
+    # Calculate relative error for y2 at all points (excluding j=0)
+    relative_err_rk3 = np.abs((y_rk3[1:, 1] - y_exact_all[1:, 1]) / y_exact_all[1:, 1])
+    relative_err_dirk3 = np.abs((y_dirk3[1:, 1] - y_exact_all[1:, 1]) / y_exact_all[1:, 1])
+    
+    # Calculate the 1-norm (sum * h)
+    error_rk3 = h * np.sum(relative_err_rk3)
+    error_dirk3 = h * np.sum(relative_err_dirk3)
     
     errors_rk3.append(error_rk3)
     errors_dirk3.append(error_dirk3)
@@ -121,8 +128,15 @@ errors_dirk3_2 = []
 for N in N_values2:
     x_dirk3_2, y_dirk3_2 = dirk3(A2, bvector2, yo2, interval2, N)
     
-    y_exact_2 = exact_y2(x_dirk3_2[-1])
-    error_dirk3_2 = np.abs(y_dirk3_2[-1, 2] - y_exact_2[0,2]) / np.abs(y_exact_2[0,2])
+    # Get the exact solution at all x points
+    y_exact_all_2 = exact_y2(x_dirk3_2)
+    
+    # Calculate relative error for y3 at all points (excluding j=0)
+    relative_err_dirk3_2 = np.abs((y_dirk3_2[1:, 2] - y_exact_all_2[1:, 2]) / y_exact_all_2[1:, 2])
+    
+    # Calculate the 1-norm (sum * h)
+    h2 = 1.0 / N
+    error_dirk3_2 = h2 * np.sum(relative_err_dirk3_2)
     
     errors_dirk3_2.append(error_dirk3_2)
 
