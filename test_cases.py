@@ -8,7 +8,7 @@ print("Test Case 1: Moderately Stiff System")
 a1 = 1000
 a2 = 1
 A1 = np.array([[-a1, 0], [a1, -a2]])
-bvector1 = np.zeros(2)
+bvector1 = lambda x: np.zeros(2)
 yo1 = np.array([1.0, 0.0])
 interval1 = [0, 0.1]
 
@@ -39,7 +39,6 @@ for i, N in enumerate(N_values):
     
     errors_rk3.append(error_rk3)
     errors_dirk3.append(error_dirk3)
-    print(f"N={N}, h={h}, error_rk3={error_rk3}, error_dirk3={error_dirk3}")
 
 errors_rk3 = np.array(errors_rk3)
 errors_dirk3 = np.array(errors_dirk3)
@@ -91,16 +90,27 @@ plt.show()
 # Test Case 2: Stiff System
 print("Test Case 2: Stiff System")
 
-# Assuming A from Equation 106, b from 108, yo from 109
-# Since not specified, using a standard stiff 3x3 system
-A2 = np.array([[-1000, 0, 0], [0, -100, 0], [0, 0, -1]])
-bvector2 = np.zeros(3)
+# A from Equation 106
+A2 = np.array([[-1, 0, 0], [-99, -100, 0], [-10098, 9900, -10000]])
+# b(x) from Equation 108
+def bvector2(x):
+    return np.array([np.cos(10*x) - 10*np.sin(10*x), 199*np.cos(10*x) - 10*np.sin(10*x), 208*np.cos(10*x) + 10000*np.sin(10*x)])
+# yo from Equation 109
 yo2 = np.array([0.0, 1.0, 0.0])
 interval2 = [0, 1]
 
-# Exact solution
+# Exact solution from Equation 110
 def exact_y2(x):
-    return np.column_stack([np.zeros_like(x), np.exp(-100 * x), np.exp(-x)])
+    x = np.asarray(x)
+    cos10x = np.cos(10*x)
+    sin10x = np.sin(10*x)
+    e_x = np.exp(-x)
+    e_100x = np.exp(-100*x)
+    e_10000x = np.exp(-10000*x)
+    y1 = cos10x - e_x
+    y2 = cos10x + e_x - e_100x
+    y3 = sin10x + 2*e_x - e_100x - e_10000x
+    return np.column_stack([y1, y2, y3])
 
 k_values2 = np.arange(4, 17)
 N_values2 = 200 * k_values2
