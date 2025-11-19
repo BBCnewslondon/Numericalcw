@@ -50,18 +50,6 @@ for i, N in enumerate(N_values):
 errors_rk3 = np.array(errors_rk3)
 errors_dirk3 = np.array(errors_dirk3)
 
-# Plot error vs h
-plt.figure(figsize=(10, 6))
-plt.loglog(h_values, errors_rk3, 'o-', label='RK3')
-plt.loglog(h_values, errors_dirk3, 's-', label='DIRK3')
-plt.xlabel('Step size h')
-plt.ylabel('Relative error for y2')
-plt.title('Error vs Step Size for Test Case 1')
-plt.legend()
-plt.grid(True)
-plt.savefig('test_case_1_error_vs_h.png')
-plt.show()
-
 # Fit curve for RK3
 coeffs_rk3 = np.polyfit(np.log(h_values), np.log(errors_rk3), 1)
 slope_rk3 = coeffs_rk3[0]
@@ -71,6 +59,28 @@ print(f"RK3 slope: {slope_rk3}")
 coeffs_dirk3 = np.polyfit(np.log(h_values), np.log(errors_dirk3), 1)
 slope_dirk3 = coeffs_dirk3[0]
 print(f"DIRK3 slope: {slope_dirk3}")
+
+# Plot RK3 Error vs h
+plt.figure(figsize=(10, 6))
+plt.loglog(h_values, errors_rk3, 'o-', label=f'RK3 (Slope: {slope_rk3:.2f})')
+plt.xlabel('Step size h')
+plt.ylabel('Relative error for y2')
+plt.title('RK3 Error vs Step Size for Test Case 1')
+plt.legend()
+plt.grid(True)
+plt.savefig('test_case_1_rk3_error.png')
+plt.show()
+
+# Plot DIRK3 Error vs h
+plt.figure(figsize=(10, 6))
+plt.loglog(h_values, errors_dirk3, 's-', label=f'DIRK3 (Slope: {slope_dirk3:.2f})')
+plt.xlabel('Step size h')
+plt.ylabel('Relative error for y2')
+plt.title('DIRK3 Error vs Step Size for Test Case 1')
+plt.legend()
+plt.grid(True)
+plt.savefig('test_case_1_dirk3_error.png')
+plt.show()
 
 # Plot numerical solution at N=400
 N_high = 400
@@ -84,14 +94,25 @@ plt.plot(x_exact, y_exact_plot[:, 0], 'k-', label='Exact y1')
 plt.plot(x_exact, y_exact_plot[:, 1], 'k--', label='Exact y2')
 plt.plot(x_rk3_high, y_rk3_high[:, 0], 'b-o', label='RK3 y1', markersize=2)
 plt.plot(x_rk3_high, y_rk3_high[:, 1], 'b-s', label='RK3 y2', markersize=2)
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('RK3 Solution vs Exact for Test Case 1 (N=400)')
+plt.legend()
+plt.grid(True)
+plt.savefig('test_case_1_rk3_solution.png')
+plt.show()
+
+plt.figure(figsize=(10, 6))
+plt.plot(x_exact, y_exact_plot[:, 0], 'k-', label='Exact y1')
+plt.plot(x_exact, y_exact_plot[:, 1], 'k--', label='Exact y2')
 plt.plot(x_dirk3_high, y_dirk3_high[:, 0], 'r-o', label='DIRK3 y1', markersize=2)
 plt.plot(x_dirk3_high, y_dirk3_high[:, 1], 'r-s', label='DIRK3 y2', markersize=2)
 plt.xlabel('x')
 plt.ylabel('y')
-plt.title('Numerical Solutions vs Exact for Test Case 1 (N=400)')
+plt.title('DIRK3 Solution vs Exact for Test Case 1 (N=400)')
 plt.legend()
 plt.grid(True)
-plt.savefig('test_case_1_solutions.png')
+plt.savefig('test_case_1_dirk3_solution.png')
 plt.show()
 
 # Test Case 2: Stiff System
@@ -142,21 +163,21 @@ for N in N_values2:
 
 errors_dirk3_2 = np.array(errors_dirk3_2)
 
+# Fit curve
+coeffs_dirk3_2 = np.polyfit(np.log(h_values2), np.log(errors_dirk3_2), 1)
+slope_dirk3_2 = coeffs_dirk3_2[0]
+print(f"DIRK3 slope for Test Case 2: {slope_dirk3_2}")
+
 # Plot error vs h for DIRK3
 plt.figure(figsize=(10, 6))
-plt.loglog(h_values2, errors_dirk3_2, 's-', label='DIRK3')
+plt.loglog(h_values2, errors_dirk3_2, 's-', label=f'DIRK3 (Slope: {slope_dirk3_2:.2f})')
 plt.xlabel('Step size h')
 plt.ylabel('Relative error for y3')
 plt.title('Error vs Step Size for DIRK3 in Test Case 2')
 plt.legend()
 plt.grid(True)
-plt.savefig('test_case_2_error_vs_h.png')
+plt.savefig('test_case_2_dirk3_error.png')
 plt.show()
-
-# Fit curve
-coeffs_dirk3_2 = np.polyfit(np.log(h_values2), np.log(errors_dirk3_2), 1)
-slope_dirk3_2 = coeffs_dirk3_2[0]
-print(f"DIRK3 slope for Test Case 2: {slope_dirk3_2}")
 
 # Plot numerical solutions at highest N
 N_high2 = 3200
@@ -166,18 +187,29 @@ x_exact2 = np.linspace(0, 1, 1000)
 y_exact_plot2 = exact_y2(x_exact2)
 
 plt.figure(figsize=(15, 10))
-
 for i in range(3):
     plt.subplot(3, 1, i+1)
     plt.plot(x_exact2, y_exact_plot2[:, i], 'k-', label=f'Exact y{i+1}')
     plt.plot(x_rk3_high2, y_rk3_high2[:, i], 'b-o', label=f'RK3 y{i+1}', markersize=1)
+    plt.xlabel('x')
+    plt.ylabel(f'y{i+1}')
+    plt.title(f'RK3 Component y{i+1} for Test Case 2 (N={N_high2})')
+    plt.legend()
+    plt.grid(True)
+plt.tight_layout()
+plt.savefig('test_case_2_rk3_solution.png')
+plt.show()
+
+plt.figure(figsize=(15, 10))
+for i in range(3):
+    plt.subplot(3, 1, i+1)
+    plt.plot(x_exact2, y_exact_plot2[:, i], 'k-', label=f'Exact y{i+1}')
     plt.plot(x_dirk3_high2, y_dirk3_high2[:, i], 'r-s', label=f'DIRK3 y{i+1}', markersize=1)
     plt.xlabel('x')
     plt.ylabel(f'y{i+1}')
-    plt.title(f'Component y{i+1} for Test Case 2 (N={N_high2})')
+    plt.title(f'DIRK3 Component y{i+1} for Test Case 2 (N={N_high2})')
     plt.legend()
     plt.grid(True)
-
 plt.tight_layout()
-plt.savefig('test_case_2_solutions.png')
+plt.savefig('test_case_2_dirk3_solution.png')
 plt.show()
