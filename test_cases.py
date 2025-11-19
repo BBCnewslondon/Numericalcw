@@ -1,3 +1,6 @@
+#Gen Ai declearation
+# AI was used for debugging  and comments
+
 import numpy as np
 import matplotlib.pyplot as plt
 from runge_kutta import rk3, dirk3
